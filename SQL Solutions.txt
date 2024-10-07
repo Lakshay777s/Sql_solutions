@@ -1,0 +1,39 @@
+SQL Solutions:
+
+Question: Given a table employees with columns employee_id, manager_id, and name, where manager_id is the ID of the employee's direct manager, create a query to find all employees who are at least three levels of management below a given employee.
+
+Table Structure:
+
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    manager_id INT,
+    name VARCHAR(100)
+);
+
+Solution:
+
+
+WITH RECURSIVE employee_hierarchy AS (
+    SELECT 
+        employee_id, 
+        manager_id, 
+        name, 
+        0 AS level
+    FROM employees
+    WHERE employee_id = <given_employee_id> -- Replace with the desired employee ID
+
+    UNION ALL
+
+    SELECT 
+        e.employee_id, 
+        e.manager_id, 
+        e.name, 
+        eh.level + 1 AS level
+    FROM employees e
+    JOIN employee_hierarchy eh ON e.manager_id = eh.employee_id
+)
+SELECT 
+    employee_id, 
+    name
+FROM employee_hierarchy
+WHERE level >= 3;
